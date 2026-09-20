@@ -1,0 +1,76 @@
+rules_version = '2';
+
+// CostLog — Cloud Firestore security rules.
+//
+// The frontend is never the security layer. Every rule below resolves the
+// owner from request.auth.uid and compares it to the {uid} in the path, so a
+// signed-in user cannot read, edit or delete anything under another user's
+// document even if they change a URL or a document id in the client.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function validCategory(data) {
+      return data.name is string
+        && data.name.size() > 0
+        && data.name.size() <= 60;
+    }
+
+    function validExpense(data) {
+      return data.sector is string
+        && data.sector.size() > 0
+        && data.sector.size() <= 80
+        && data.amount is number
+        && data.amount > 0
+        && data.date is string
+        && data.date.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}');
+    }
+
+    // users/{uid} — the private root of one person's notebook.
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.email is string;
+      // a user may correct their own profile but never take over another uid
+      allow update: if isOwner(uid)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email;
+      allow delete: if false;
+
+      // users/{uid}/categories/{categoryId}
+      match /categories/{categoryId} {
+        allow read, list: if isOwner(uid);
+        allow create: if isOwner(uid)
+          && validCategory(request.resource.data);
+        allow update: if isOwner(uid)
+          && (!('name' in request.resource.data.diff(resource.data).affectedKeys())
+              || validCategory(request.resource.data));
+        allow delete: if isOwner(uid);
+
+        // users/{uid}/categories/{categoryId}/expenses/{expenseId}
+        match /expenses/{expenseId} {
+          allow read, list: if isOwner(uid);
+          allow create: if isOwner(uid)
+            && validExpense(request.resource.data);
+          allow update: if isOwner(uid)
+            && validExpense(request.resource.data);
+          allow delete: if isOwner(uid);
+        }
+      }
+    }
+
+    // Anything not matched above is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
