@@ -97,7 +97,7 @@ export function ModalHeader({ title, id, onClose }) {
 }
 
 export function ModalActions({ children }) {
-  return <div className="mt-7 flex flex-wrap justify-end gap-3">{children}</div>;
+  return <div className="mt-7 flex flex-wrap gap-3">{children}</div>;
 }
 
 export function FieldError({ id, children }) {

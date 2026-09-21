@@ -1,7 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen, Briefcase, Building2, FolderKanban, GraduationCap, Plane, ShoppingBag, Tag, Wallet } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  Briefcase,
+  Building2,
+  FolderKanban,
+  GraduationCap,
+  Plane,
+  ShoppingBag,
+  Tag,
+  Wallet,
+} from "lucide-react";
 import CategoryMenu from "./CategoryMenu";
 import { formatCurrency } from "@/lib/formatCurrency";
 
@@ -31,10 +42,14 @@ export default function CategoryCard({ category, onRenamed, onDeleted }) {
   return (
     <article className="neu relative flex h-full flex-col p-5 transition-shadow duration-150">
       <div className="flex items-start justify-between gap-3">
+        <CategoryMenu
+          category={category}
+          onRenamed={onRenamed}
+          onDeleted={onDeleted}
+        />
         <span className="neu-in grid h-11 w-11 place-items-center rounded-full text-indigo">
           <Icon size={19} aria-hidden="true" />
         </span>
-        <CategoryMenu category={category} onRenamed={onRenamed} onDeleted={onDeleted} />
       </div>
 
       <h3 className="mt-4 font-display text-[1.3rem] font-semibold leading-snug">
