@@ -80,7 +80,7 @@ export default function CategoryMenu({
           role="menu"
           aria-label={`${category.name} options`}
           className={`neu anim-rise absolute top-[calc(100%+0.6rem)] w-40 p-2 ${
-            align == "right" ? "right-5" : "left-0"
+            align == "right" ? "left-0" : "right-0"
           }`}
         >
           <button
