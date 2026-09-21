@@ -7,7 +7,12 @@ import CategoryModal from "./AddCategoryModal";
 import { deleteCategory, updateCategory } from "@/lib/api";
 import { humanizeError, GENERIC_MESSAGE } from "@/lib/errors";
 
-export default function CategoryMenu({ category, onRenamed, onDeleted, align = "right" }) {
+export default function CategoryMenu({
+  category,
+  onRenamed,
+  onDeleted,
+  align = "right",
+}) {
   const [open, setOpen] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -23,7 +28,10 @@ export default function CategoryMenu({ category, onRenamed, onDeleted, align = "
       setRenaming(false);
       onRenamed?.({ ...category, name });
     } catch (err) {
-      const message = humanizeError(err, "This field could not be renamed. Please try again.");
+      const message = humanizeError(
+        err,
+        "This field could not be renamed. Please try again.",
+      );
       setError(message);
       throw Object.assign(new Error("rename"), { friendly: message });
     } finally {
@@ -39,7 +47,12 @@ export default function CategoryMenu({ category, onRenamed, onDeleted, align = "
       setConfirming(false);
       onDeleted?.(category);
     } catch (err) {
-      setError(humanizeError(err, "This field could not be deleted. Please try again."));
+      setError(
+        humanizeError(
+          err,
+          "This field could not be deleted. Please try again.",
+        ),
+      );
     } finally {
       setBusy(false);
     }
@@ -67,7 +80,7 @@ export default function CategoryMenu({ category, onRenamed, onDeleted, align = "
           role="menu"
           aria-label={`${category.name} options`}
           className={`neu anim-rise absolute top-[calc(100%+0.6rem)] w-40 p-2 ${
-            align === "right" ? "right-0" : "left-0"
+            align == "right" ? "right-5" : "left-0"
           }`}
         >
           <button
